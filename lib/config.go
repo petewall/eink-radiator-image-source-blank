@@ -1,8 +1,9 @@
 package lib
 
 import (
-	"golang.org/x/image/colornames"
 	"image/color"
+
+	"golang.org/x/image/colornames"
 )
 
 type ScreenSize struct {

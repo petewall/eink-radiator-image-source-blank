@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/fogleman/gg"
-	"github.com/petewall/eink-radiator-image-source-blank/m/v2/lib"
+	"github.com/petewall/eink-radiator-image-source-blank/v2/lib"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -52,9 +52,9 @@ var generateCmd = &cobra.Command{
 
 		if viper.GetBool("to-stdout") {
 			return png.Encode(cmd.OutOrStdout(), imageContext.Image())
-		} else {
-			return imageContext.SavePNG(viper.GetString("output"))
 		}
+
+		return imageContext.SavePNG(viper.GetString("output"))
 	},
 }
 
