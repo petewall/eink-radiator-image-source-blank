@@ -63,7 +63,7 @@ func init() {
 	generateCmd.Flags().StringP("config", "c", "", "the path to the image config file")
 	generateCmd.Flags().StringP("screen", "s", "", "the path to the screen config file")
 
-	generateCmd.Flags().StringP("output", "o", ImageTypeName+".png", "print the image to stdout")
+	generateCmd.Flags().StringP("output", "o", ImageTypeName+".png", "path to write the file")
 	generateCmd.Flags().Bool("to-stdout", false, "print the image to stdout")
 	_ = viper.BindPFlags(generateCmd.Flags())
 }
