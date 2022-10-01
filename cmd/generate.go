@@ -1,69 +1,52 @@
 package cmd
 
 import (
-	"image/png"
-	"os"
-
 	"github.com/fogleman/gg"
-	"github.com/petewall/eink-radiator-image-source-blank/v2/lib"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
+
+	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 )
 
-var (
-	imageConfig  *lib.ImageConfig
-	screenConfig *lib.ScreenConfig
-)
+var config *internal.Config
 
-func ParseConfigs(cmd *cobra.Command, args []string) error {
-	configData, err := os.ReadFile(viper.GetString("config"))
-	if err != nil {
-		return err
-	}
+func parseConfig(cmd *cobra.Command, args []string) error {
+	var err error
+	config, err = internal.ParseConfig(viper.GetString("config"))
 
-	err = yaml.Unmarshal(configData, &imageConfig)
-	if err != nil {
-		return err
-	}
-
-	configData, err = os.ReadFile(viper.GetString("screen"))
-	if err != nil {
-		return err
-	}
-
-	err = yaml.Unmarshal(configData, &screenConfig)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
-var generateCmd = &cobra.Command{
+var GenerateCmd = &cobra.Command{
 	Use:     "generate",
 	Short:   "Generates a " + ImageTypeName + " image",
-	PreRunE: ParseConfigs,
+	PreRunE: parseConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		imageContext := gg.NewContext(screenConfig.Size.Width, screenConfig.Size.Height)
-		imageContext.SetColor(imageConfig.GetColor())
-		imageContext.DrawRectangle(0, 0, float64(screenConfig.Size.Width), float64(screenConfig.Size.Height))
+		imageContext := gg.NewContext(viper.GetInt("width"), viper.GetInt("height"))
+		imageContext.SetColor(config.GetColor())
+		imageContext.DrawRectangle(0, 0, float64(viper.GetInt("width")), float64(viper.GetInt("height")))
 		imageContext.Fill()
 
 		if viper.GetBool("to-stdout") {
-			return png.Encode(cmd.OutOrStdout(), imageContext.Image())
+			return imageContext.EncodePNG(cmd.OutOrStdout())
 		}
 
 		return imageContext.SavePNG(viper.GetString("output"))
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(generateCmd)
-	generateCmd.Flags().StringP("config", "c", "", "the path to the image config file")
-	generateCmd.Flags().StringP("screen", "s", "", "the path to the screen config file")
+const (
+	DefaultImageHeight = 480
+	DefaultImageWidth  = 640
+)
 
-	generateCmd.Flags().StringP("output", "o", ImageTypeName+".png", "path to write the file")
-	generateCmd.Flags().Bool("to-stdout", false, "print the image to stdout")
-	_ = viper.BindPFlags(generateCmd.Flags())
+func init() {
+	rootCmd.AddCommand(GenerateCmd)
+	GenerateCmd.Flags().StringP("config", "c", "", "the path to the image config file")
+	GenerateCmd.Flags().Int("height", DefaultImageHeight, "the height of the image")
+	GenerateCmd.Flags().Int("width", DefaultImageWidth, "the width of the image")
+
+	GenerateCmd.Flags().StringP("output", "o", ImageTypeName+".png", "path to write the file")
+	GenerateCmd.Flags().Bool("to-stdout", false, "print the image to stdout")
+	_ = viper.BindPFlags(GenerateCmd.Flags())
 }

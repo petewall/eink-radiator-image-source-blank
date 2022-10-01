@@ -1,4 +1,4 @@
-# HAS_GINKGO := $(shell command -v ginkgo;)
+HAS_GINKGO := $(shell command -v ginkgo;)
 HAS_GOLANGCI_LINT := $(shell command -v golangci-lint;)
 # HAS_COUNTERFEITER := $(shell command -v counterfeiter;)
 PLATFORM := $(shell uname -s)
@@ -11,10 +11,10 @@ PLATFORM := $(shell uname -s)
 # 	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
 # endif
 
-# deps-ginkgo: deps-go-binary
-# ifndef HAS_GINKGO
-# 	go install github.com/onsi/ginkgo/ginkgo@latest
-# endif
+deps-ginkgo:
+ifndef HAS_GINKGO
+	go install github.com/onsi/ginkgo/v2/ginkgo
+endif
 
 deps-modules:
 	go mod download
@@ -37,8 +37,8 @@ endif
 endif
 	golangci-lint run
 
-# test: lib/libfakes/fake_firmware_store.go deps-modules deps-ginkgo
-# 	ginkgo -r -skipPackage test .
+test: deps-modules deps-ginkgo
+	ginkgo -r .
 
 # integration-test: deps-modules deps-ginkgo
 # 	ginkgo -r test/integration
@@ -49,8 +49,10 @@ endif
 # #### BUILD ####
 .PHONY: build
 SOURCES = $(shell find . -name "*.go" | grep -v "_test\." )
+VERSION := $(or $(VERSION), dev)
+LDFLAGS="-X github.com/petewall/eink-radiator-image-source-blank/v2/cmd.Version=$(VERSION)"
 
 build/blank: $(SOURCES) deps-modules
-	go build -o build/blank github.com/petewall/eink-radiator-image-source-blank/v2
+	go build -o build/blank -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
 
 build: build/blank
