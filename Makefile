@@ -4,7 +4,7 @@ HAS_COUNTERFEITER := $(shell command -v counterfeiter;)
 PLATFORM := $(shell uname -s)
 
 # #### DEPS ####
-# .PHONY: deps-go-binary deps-counterfeiter deps-golangci-lint deps-modules
+.PHONY: deps-counterfeiter deps-ginkgo deps-modules
 
 deps-counterfeiter: deps-go-binary
 ifndef HAS_COUNTERFEITER
@@ -19,12 +19,8 @@ endif
 deps-modules:
 	go mod download
 
-# #### SRC ####
-# lib/libfakes/fake_firmware_store.go: lib/firmware_store.go
-# 	go generate lib/firmware_store.go
-
 # #### TEST ####
-.PHONY: lint
+.PHONY: lint test
 
 lint:
 ifndef HAS_GOLANGCI_LINT
@@ -39,12 +35,6 @@ endif
 
 test: deps-modules deps-ginkgo
 	ginkgo -r .
-
-# integration-test: deps-modules deps-ginkgo
-# 	ginkgo -r test/integration
-
-# test-all: lib/libfakes/fake_dbinterface.go deps-modules deps-ginkgo
-# 	ginkgo -r .
 
 # #### BUILD ####
 .PHONY: build
