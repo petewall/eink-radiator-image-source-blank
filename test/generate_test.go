@@ -39,7 +39,8 @@ var _ = Describe("Generate", func() {
 		configFile, err = os.CreateTemp("", "blank-image-config.json")
 		Expect(err).ToNot(HaveOccurred())
 
-		configFile.Write(configFileData)
+		_, err = configFile.Write(configFileData)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("generates a blank image", func() {
