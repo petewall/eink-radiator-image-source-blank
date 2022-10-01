@@ -2,6 +2,7 @@ package internal_test
 
 import (
 	"encoding/json"
+	"image/color"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -9,7 +10,59 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
+	"github.com/petewall/eink-radiator-image-source-blank/v2/internal/internalfakes"
 )
+
+var _ = Describe("Config", func() {
+	Describe("GetColor", func() {
+		It("returns the RGBA color value", func() {
+			config := &internal.Config{Color: "darkorchid"}
+			Expect(config.GetColor()).To(Equal(color.RGBA{0x99, 0x32, 0xcc, 0xff}))
+		})
+	})
+
+	Describe("GenerateImage", func() {
+		var (
+			newImageContext *internalfakes.FakeImageContextMaker
+			imageContext    *internalfakes.FakeImageContext
+		)
+
+		BeforeEach(func() {
+			imageContext = &internalfakes.FakeImageContext{}
+			newImageContext = &internalfakes.FakeImageContextMaker{}
+			newImageContext.Returns(imageContext)
+			internal.NewImageContext = newImageContext.Spy
+		})
+
+		It("makes a blank image of a certain color", func() {
+			config := &internal.Config{Color: "blanchedalmond"}
+			image := config.GenerateImage(100, 200)
+
+			By("creating a new image context", func() {
+				Expect(newImageContext.CallCount()).To(Equal(1))
+				width, height := newImageContext.ArgsForCall(0)
+				Expect(width).To(Equal(100))
+				Expect(height).To(Equal(200))
+			})
+
+			By("creating the right image", func() {
+				Expect(imageContext.SetColorCallCount()).To(Equal(1))
+				Expect(imageContext.SetColorArgsForCall(0)).To(Equal(color.RGBA{0xff, 0xeb, 0xcd, 0xff}))
+				Expect(imageContext.DrawRectangleCallCount()).To(Equal(1))
+				x, y, w, h := imageContext.DrawRectangleArgsForCall(0)
+				Expect(x).To(Equal(0.0))
+				Expect(y).To(Equal(0.0))
+				Expect(w).To(Equal(100.0))
+				Expect(h).To(Equal(200.0))
+				Expect(imageContext.FillCallCount()).To(Equal(1))
+			})
+
+			By("returning the image context", func() {
+				Expect(image).To(Equal(imageContext))
+			})
+		})
+	})
+})
 
 var _ = Describe("ParseConfig", func() {
 	var (

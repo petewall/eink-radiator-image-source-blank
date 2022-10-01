@@ -1,15 +1,15 @@
 HAS_GINKGO := $(shell command -v ginkgo;)
 HAS_GOLANGCI_LINT := $(shell command -v golangci-lint;)
-# HAS_COUNTERFEITER := $(shell command -v counterfeiter;)
+HAS_COUNTERFEITER := $(shell command -v counterfeiter;)
 PLATFORM := $(shell uname -s)
 
 # #### DEPS ####
 # .PHONY: deps-go-binary deps-counterfeiter deps-golangci-lint deps-modules
 
-# deps-counterfeiter: deps-go-binary
-# ifndef HAS_COUNTERFEITER
-# 	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
-# endif
+deps-counterfeiter: deps-go-binary
+ifndef HAS_COUNTERFEITER
+	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
+endif
 
 deps-ginkgo:
 ifndef HAS_GINKGO

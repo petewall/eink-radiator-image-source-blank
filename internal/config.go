@@ -17,6 +17,15 @@ func (c *Config) GetColor() color.Color {
 	return colornames.Map[c.Color]
 }
 
+func (c *Config) GenerateImage(width, height int) ImageContext {
+	imageContext := NewImageContext(width, height)
+	imageContext.SetColor(c.GetColor())
+	imageContext.DrawRectangle(0, 0, float64(width), float64(height))
+	imageContext.Fill()
+
+	return imageContext
+}
+
 func ParseConfig(path string) (*Config, error) {
 	configData, err := os.ReadFile(path)
 	if err != nil {

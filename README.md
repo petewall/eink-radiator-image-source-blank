@@ -1,8 +1,17 @@
 # eInk Radiator Image Source: Blank
 
-Generates images with a single color
+Generates an image with a single color.
 
-## TODO
+```bash
+blank --config config.json --height 300 --width 400
+```
 
-* Finish generate cmd tests
-* Update CI pipeline to test, build and version
+## Configuration
+
+The only configuration is the image color. The config file can be in JSON or YAML format:
+
+```json
+{
+    "color": "purple"
+}
+```
