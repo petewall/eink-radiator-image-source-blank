@@ -14,13 +14,6 @@ import (
 )
 
 var _ = Describe("Config", func() {
-	Describe("GetColor", func() {
-		It("returns the RGBA color value", func() {
-			config := &internal.Config{Color: "darkorchid"}
-			Expect(config.GetColor()).To(Equal(color.RGBA{0x99, 0x32, 0xcc, 0xff}))
-		})
-	})
-
 	Describe("GenerateImage", func() {
 		var (
 			newImageContext *internalfakes.FakeImageContextMaker

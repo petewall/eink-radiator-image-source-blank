@@ -2,7 +2,6 @@ package internal
 
 import (
 	"fmt"
-	"image/color"
 	"os"
 
 	"golang.org/x/image/colornames"
@@ -13,13 +12,9 @@ type Config struct {
 	Color string `json:"color" yaml:"color"`
 }
 
-func (c *Config) GetColor() color.Color {
-	return colornames.Map[c.Color]
-}
-
 func (c *Config) GenerateImage(width, height int) ImageContext {
 	imageContext := NewImageContext(width, height)
-	imageContext.SetColor(c.GetColor())
+	imageContext.SetColor(colornames.Map[c.Color])
 	imageContext.DrawRectangle(0, 0, float64(width), float64(height))
 	imageContext.Fill()
 
