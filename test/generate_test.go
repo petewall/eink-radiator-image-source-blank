@@ -1,51 +1,29 @@
 package test_test
 
 import (
-	"encoding/json"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
-
-	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 )
 
 var _ = Describe("Generate", func() {
-	var (
-		configFile     *os.File
-		configFileData []byte
-		outputFile     string
-	)
+	var outputFile string
 
 	BeforeEach(func() {
 		outputFile = ""
-
-		var err error
-		config := internal.Config{Color: "orange"}
-		configFileData, err = json.Marshal(config)
-		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		Expect(os.Remove(configFile.Name())).To(Succeed())
 		if outputFile != "" {
 			Expect(os.Remove(outputFile)).To(Succeed())
 		}
 	})
 
-	JustBeforeEach(func() {
-		var err error
-		configFile, err = os.CreateTemp("", "blank-image-config.json")
-		Expect(err).ToNot(HaveOccurred())
-
-		_, err = configFile.Write(configFileData)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 	It("generates a blank image", func() {
 		outputFile = "orange.png"
-		Run("generate --output " + outputFile + " --config " + configFile.Name())
+		Run("generate --output orange.png --config orange-config.yaml")
 		Eventually(CommandSession).Should(Exit(0))
 
 		By("saving the image to a file", func() {
@@ -58,15 +36,8 @@ var _ = Describe("Generate", func() {
 	})
 
 	When("using --to-stdout", func() {
-		BeforeEach(func() {
-			var err error
-			config := internal.Config{Color: "green"}
-			configFileData, err = json.Marshal(config)
-			Expect(err).ToNot(HaveOccurred())
-		})
-
 		It("writes the image to stdout", func() {
-			Run("generate --height 200 --width 300 --to-stdout --config " + configFile.Name())
+			Run("generate --height 200 --width 300 --to-stdout --config green-config.json")
 			Eventually(CommandSession).Should(Exit(0))
 
 			By("saving the image to a file", func() {
