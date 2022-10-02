@@ -40,11 +40,9 @@ var _ = Describe("Generate", func() {
 			Run("generate --height 200 --width 300 --to-stdout --config green-config.json")
 			Eventually(CommandSession).Should(Exit(0))
 
-			By("saving the image to a file", func() {
-				expectedData, err := os.ReadFile("expected_green.png")
-				Expect(err).ToNot(HaveOccurred())
-				Expect(CommandSession.Out.Contents()).To(Equal(expectedData))
-			})
+			expectedData, err := os.ReadFile("expected_green.png")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(CommandSession.Out.Contents()).To(Equal(expectedData))
 		})
 	})
 })
