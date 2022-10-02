@@ -10,7 +10,7 @@ const ImageTypeName = "blank"
 
 var rootCmd = &cobra.Command{
 	Use:   ImageTypeName,
-	Short: "A brief description of your application",
+	Short: "Generates an image with a single color",
 }
 
 func Execute() {

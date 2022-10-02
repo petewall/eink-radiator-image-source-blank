@@ -33,7 +33,7 @@ var GenerateCmd = &cobra.Command{
 const (
 	DefaultImageHeight    = 480
 	DefaultImageWidth     = 640
-	DefaultOutputFilename = "blank.png"
+	DefaultOutputFilename = ImageTypeName + ".png"
 )
 
 func init() {
