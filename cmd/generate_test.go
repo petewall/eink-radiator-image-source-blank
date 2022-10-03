@@ -10,21 +10,21 @@ import (
 	. "github.com/onsi/gomega/gbytes"
 
 	"github.com/petewall/eink-radiator-image-source-blank/v2/cmd"
-	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal/internalfakes"
 )
 
 var _ = Describe("Generate", func() {
 	var (
-		newImageContext *internalfakes.FakeImageContextMaker
-		imageContext    *internalfakes.FakeImageContext
+		imageGenerator *internalfakes.FakeImageGenerator
+		imageContext   *internalfakes.FakeImageContext
 	)
 
 	BeforeEach(func() {
 		imageContext = &internalfakes.FakeImageContext{}
-		newImageContext = &internalfakes.FakeImageContextMaker{}
-		newImageContext.Returns(imageContext)
-		internal.NewImageContext = newImageContext.Spy
+		imageGenerator = &internalfakes.FakeImageGenerator{}
+		imageGenerator.GenerateImageReturns(imageContext)
+
+		cmd.ImageGenerator = imageGenerator
 
 		viper.Set("to-stdout", false)
 		viper.Set("output", cmd.DefaultOutputFilename)
@@ -33,7 +33,6 @@ var _ = Describe("Generate", func() {
 	})
 
 	It("generates a blank image", func() {
-		cmd.Config = &internal.Config{Color: "orange"}
 		err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -43,8 +42,8 @@ var _ = Describe("Generate", func() {
 		})
 
 		By("defaulting to 640x480", func() {
-			Expect(newImageContext.CallCount()).To(Equal(1))
-			width, height := newImageContext.ArgsForCall(0)
+			Expect(imageGenerator.GenerateImageCallCount()).To(Equal(1))
+			width, height := imageGenerator.GenerateImageArgsForCall(0)
 			Expect(width).To(Equal(640))
 			Expect(height).To(Equal(480))
 		})
@@ -60,7 +59,6 @@ var _ = Describe("Generate", func() {
 		})
 
 		It("outputs the image to stdout", func() {
-			cmd.Config = &internal.Config{Color: "orange"}
 			err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 			Expect(err).ToNot(HaveOccurred())
 
@@ -86,12 +84,11 @@ var _ = Describe("Generate", func() {
 			viper.Set("height", 1000)
 			viper.Set("width", 2000)
 
-			cmd.Config = &internal.Config{Color: "orange"}
 			err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(newImageContext.CallCount()).To(Equal(1))
-			width, height := newImageContext.ArgsForCall(0)
+			Expect(imageGenerator.GenerateImageCallCount()).To(Equal(1))
+			width, height := imageGenerator.GenerateImageArgsForCall(0)
 			Expect(width).To(Equal(2000))
 			Expect(height).To(Equal(1000))
 		})

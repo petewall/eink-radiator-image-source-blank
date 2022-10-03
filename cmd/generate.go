@@ -7,11 +7,11 @@ import (
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 )
 
-var Config *internal.Config
+var ImageGenerator internal.ImageGenerator
 
 func parseConfig(cmd *cobra.Command, args []string) error {
 	var err error
-	Config, err = internal.ParseConfig(viper.GetString("config"))
+	ImageGenerator, err = internal.ParseConfig(viper.GetString("config"))
 	return err
 }
 
@@ -20,7 +20,7 @@ var GenerateCmd = &cobra.Command{
 	Short:   "Generates a " + ImageTypeName + " image",
 	PreRunE: parseConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		imageContext := Config.GenerateImage(viper.GetInt("width"), viper.GetInt("height"))
+		imageContext := ImageGenerator.GenerateImage(viper.GetInt("width"), viper.GetInt("height"))
 
 		if viper.GetBool("to-stdout") {
 			return imageContext.EncodePNG(cmd.OutOrStdout())

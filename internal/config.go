@@ -8,6 +8,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+//counterfeiter:generate . ImageGenerator
+type ImageGenerator interface {
+	GenerateImage(width, height int) ImageContext
+}
+
 type Config struct {
 	Color string `json:"color" yaml:"color"`
 }
