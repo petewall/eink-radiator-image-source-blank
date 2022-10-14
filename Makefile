@@ -42,7 +42,18 @@ SOURCES = $(shell find . -name "*.go" | grep -v "_test\." )
 VERSION := $(or $(VERSION), dev)
 LDFLAGS="-X github.com/petewall/eink-radiator-image-source-blank/v2/cmd.Version=$(VERSION)"
 
-build/blank: $(SOURCES) deps-modules
-	go build -o build/blank -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
-
 build: build/blank
+
+build/blank: $(SOURCES) deps-modules
+	go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
+
+build-release: build/blank-arm6 build/blank-arm7 build/blank-darwin-amd64
+
+build/blank-arm6: $(SOURCES) deps-modules
+	GOOS=linux GOARCH=arm GOARM=6 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
+
+build/blank-arm7: $(SOURCES) deps-modules
+	GOOS=linux GOARCH=arm GOARM=7 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
+
+build/blank-darwin-amd64: $(SOURCES) deps-modules
+	GOOS=darwin GOARCH=amd64 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
