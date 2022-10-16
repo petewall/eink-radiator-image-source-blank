@@ -23,7 +23,7 @@ var _ = Describe("Generate", func() {
 
 	It("generates a blank image", func() {
 		outputFile = "orange.png"
-		Run("generate --output orange.png --config orange-config.yaml")
+		Run("generate --output orange.png --config orange-config.yaml --height 480 --width 640")
 		Eventually(CommandSession).Should(Exit(0))
 
 		By("saving the image to a file", func() {

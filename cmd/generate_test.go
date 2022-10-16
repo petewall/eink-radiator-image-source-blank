@@ -28,8 +28,8 @@ var _ = Describe("Generate", func() {
 
 		viper.Set("to-stdout", false)
 		viper.Set("output", cmd.DefaultOutputFilename)
-		viper.Set("height", cmd.DefaultImageHeight)
-		viper.Set("width", cmd.DefaultImageWidth)
+		viper.Set("height", 1000)
+		viper.Set("width", 2000)
 	})
 
 	It("generates a blank image", func() {
@@ -41,11 +41,11 @@ var _ = Describe("Generate", func() {
 			Expect(imageContext.SavePNGArgsForCall(0)).To(Equal("blank.png"))
 		})
 
-		By("defaulting to 640x480", func() {
+		By("using the right resolution", func() {
 			Expect(imageGenerator.GenerateImageCallCount()).To(Equal(1))
 			width, height := imageGenerator.GenerateImageArgsForCall(0)
-			Expect(width).To(Equal(640))
-			Expect(height).To(Equal(480))
+			Expect(width).To(Equal(2000))
+			Expect(height).To(Equal(1000))
 		})
 	})
 
@@ -76,21 +76,6 @@ var _ = Describe("Generate", func() {
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(Equal("encode png failed"))
 			})
-		})
-	})
-
-	When("using --height and --width to change the resolution", func() {
-		It("generates an image of the specified resolution", func() {
-			viper.Set("height", 1000)
-			viper.Set("width", 2000)
-
-			err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
-			Expect(err).ToNot(HaveOccurred())
-
-			Expect(imageGenerator.GenerateImageCallCount()).To(Equal(1))
-			width, height := imageGenerator.GenerateImageArgsForCall(0)
-			Expect(width).To(Equal(2000))
-			Expect(height).To(Equal(1000))
 		})
 	})
 
