@@ -11,9 +11,9 @@ import (
 	"golang.org/x/image/colornames"
 	"gopkg.in/yaml.v2"
 
-	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
-	"github.com/petewall/eink-radiator-image-source-blank/v2/internal/internalfakes"
-	"github.com/petewall/eink-radiator-image-source-blank/v2/pkg"
+	"github.com/petewall/eink-radiator-image-source-blank/internal"
+	"github.com/petewall/eink-radiator-image-source-blank/internal/internalfakes"
+	"github.com/petewall/eink-radiator-image-source-blank/pkg"
 )
 
 var _ = Describe("Config", func() {

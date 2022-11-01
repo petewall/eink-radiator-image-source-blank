@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
 
-	"github.com/petewall/eink-radiator-image-source-blank/v2/cmd"
+	"github.com/petewall/eink-radiator-image-source-blank/cmd"
 )
 
 var _ = Describe("Config", func() {

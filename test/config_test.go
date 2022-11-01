@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/gomega/gexec"
 	"gopkg.in/yaml.v2"
 
-	"github.com/petewall/eink-radiator-image-source-blank/v2/pkg"
+	"github.com/petewall/eink-radiator-image-source-blank/pkg"
 )
 
 var _ = Describe("Config", func() {

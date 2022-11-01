@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/petewall/eink-radiator-image-source-blank/v2/pkg"
+	"github.com/petewall/eink-radiator-image-source-blank/pkg"
 )
 
 var ConfigCmd = &cobra.Command{

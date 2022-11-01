@@ -1,4 +1,4 @@
-module github.com/petewall/eink-radiator-image-source-blank/v2
+module github.com/petewall/eink-radiator-image-source-blank
 
 go 1.19
 

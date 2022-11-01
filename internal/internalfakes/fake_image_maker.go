@@ -5,7 +5,7 @@ import (
 	"image"
 	"sync"
 
-	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
+	"github.com/petewall/eink-radiator-image-source-blank/internal"
 )
 
 type FakeImageMaker struct {

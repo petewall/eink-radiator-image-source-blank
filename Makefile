@@ -40,20 +40,20 @@ test: deps-modules deps-ginkgo
 .PHONY: build
 SOURCES = $(shell find . -name "*.go" | grep -v "_test\." )
 VERSION := $(or $(VERSION), dev)
-LDFLAGS="-X github.com/petewall/eink-radiator-image-source-blank/v2/cmd.Version=$(VERSION)"
+LDFLAGS="-X github.com/petewall/eink-radiator-image-source-blank/cmd.Version=$(VERSION)"
 
 build: build/blank
 
 build/blank: $(SOURCES) deps-modules
-	go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
+	go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank
 
 build-all: build/blank-arm6 build/blank-arm7 build/blank-darwin-amd64
 
 build/blank-arm6: $(SOURCES) deps-modules
-	GOOS=linux GOARCH=arm GOARM=6 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
+	GOOS=linux GOARCH=arm GOARM=6 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank
 
 build/blank-arm7: $(SOURCES) deps-modules
-	GOOS=linux GOARCH=arm GOARM=7 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
+	GOOS=linux GOARCH=arm GOARM=7 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank
 
 build/blank-darwin-amd64: $(SOURCES) deps-modules
-	GOOS=darwin GOARCH=amd64 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank/v2
+	GOOS=darwin GOARCH=amd64 go build -o $@ -ldflags ${LDFLAGS} github.com/petewall/eink-radiator-image-source-blank

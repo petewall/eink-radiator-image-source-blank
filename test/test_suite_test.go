@@ -23,9 +23,9 @@ var (
 var _ = BeforeSuite(func() {
 	var err error
 	imageSourcePath, err = gexec.Build(
-		"github.com/petewall/eink-radiator-image-source-blank/v2",
+		"github.com/petewall/eink-radiator-image-source-blank",
 		"-ldflags",
-		"-X github.com/petewall/eink-radiator-image-source-blank/v2/cmd.Version=1.2.3",
+		"-X github.com/petewall/eink-radiator-image-source-blank/cmd.Version=1.2.3",
 	)
 	Expect(err).NotTo(HaveOccurred())
 })

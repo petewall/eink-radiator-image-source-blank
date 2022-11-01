@@ -9,7 +9,7 @@ import (
 	"golang.org/x/image/colornames"
 	"gopkg.in/yaml.v2"
 
-	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
+	"github.com/petewall/eink-radiator-image-source-blank/internal"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
