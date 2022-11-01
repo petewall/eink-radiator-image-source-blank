@@ -2,11 +2,13 @@ package internal_test
 
 import (
 	"encoding/json"
-	"image/color"
+	"image"
+	drawOp "image/draw"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"golang.org/x/image/colornames"
 	"gopkg.in/yaml.v2"
 
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
@@ -16,42 +18,49 @@ import (
 var _ = Describe("Config", func() {
 	Describe("GenerateImage", func() {
 		var (
-			newImageContext *internalfakes.FakeImageContextMaker
-			imageContext    *internalfakes.FakeImageContext
+			img      *image.RGBA
+			draw     *internalfakes.FakeDrawer
+			newImage *internalfakes.FakeImageMaker
 		)
 
 		BeforeEach(func() {
-			imageContext = &internalfakes.FakeImageContext{}
-			newImageContext = &internalfakes.FakeImageContextMaker{}
-			newImageContext.Returns(imageContext)
-			internal.NewImageContext = newImageContext.Spy
+			img = image.NewRGBA(image.Rect(0, 0, 10, 10))
+			draw = &internalfakes.FakeDrawer{}
+			internal.Draw = draw.Spy
+			newImage = &internalfakes.FakeImageMaker{}
+			newImage.Returns(img)
+			internal.NewImage = newImage.Spy
 		})
 
 		It("makes a blank image of a certain color", func() {
 			config := &internal.Config{Color: "blanchedalmond"}
 			image := config.GenerateImage(100, 200)
 
-			By("creating a new image context", func() {
-				Expect(newImageContext.CallCount()).To(Equal(1))
-				width, height := newImageContext.ArgsForCall(0)
+			By("creating a new image", func() {
+				Expect(newImage.CallCount()).To(Equal(1))
+				width, height := newImage.ArgsForCall(0)
 				Expect(width).To(Equal(100))
 				Expect(height).To(Equal(200))
 			})
 
-			By("creating the right image", func() {
-				Expect(imageContext.SetColorCallCount()).To(Equal(1))
-				Expect(imageContext.SetColorArgsForCall(0)).To(Equal(color.RGBA{0xff, 0xeb, 0xcd, 0xff}))
-				Expect(imageContext.DrawRectangleCallCount()).To(Equal(1))
-				x, y, w, h := imageContext.DrawRectangleArgsForCall(0)
-				Expect(x).To(Equal(0.0))
-				Expect(y).To(Equal(0.0))
-				Expect(w).To(Equal(100.0))
-				Expect(h).To(Equal(200.0))
-				Expect(imageContext.FillCallCount()).To(Equal(1))
+			By("drawing the color", func() {
+				Expect(draw.CallCount()).To(Equal(1))
+				dst, rect, color, origin, op := draw.ArgsForCall(0)
+				Expect(dst).To(Equal(img))
+				Expect(rect.Min.X).To(Equal(0))
+				Expect(rect.Min.Y).To(Equal(0))
+				Expect(rect.Size().X).To(Equal(10))
+				Expect(rect.Size().Y).To(Equal(10))
+
+				Expect(color.At(0, 0)).To(Equal(colornames.Map["blanchedalmond"]))
+				Expect(origin.X).To(Equal(0))
+				Expect(origin.Y).To(Equal(0))
+
+				Expect(op).To(Equal(drawOp.Src))
 			})
 
 			By("returning the image context", func() {
-				Expect(image).To(Equal(imageContext))
+				Expect(image).To(Equal(img))
 			})
 		})
 	})

@@ -2,6 +2,7 @@ package cmd_test
 
 import (
 	"errors"
+	"image"
 
 	"github.com/spf13/viper"
 
@@ -10,21 +11,28 @@ import (
 	. "github.com/onsi/gomega/gbytes"
 
 	"github.com/petewall/eink-radiator-image-source-blank/v2/cmd"
+	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal/internalfakes"
 )
 
 var _ = Describe("Generate", func() {
 	var (
+		img            image.Image
 		imageGenerator *internalfakes.FakeImageGenerator
-		imageContext   *internalfakes.FakeImageContext
+		imageEncoder   *internalfakes.FakeImageEncoder
+		imageWriter    *internalfakes.FakeImageWriter
 	)
 
 	BeforeEach(func() {
-		imageContext = &internalfakes.FakeImageContext{}
+		img = image.NewRGBA(image.Rect(0, 0, 10, 10))
 		imageGenerator = &internalfakes.FakeImageGenerator{}
-		imageGenerator.GenerateImageReturns(imageContext)
+		imageGenerator.GenerateImageReturns(img)
+		imageEncoder = &internalfakes.FakeImageEncoder{}
+		imageWriter = &internalfakes.FakeImageWriter{}
 
 		cmd.ImageGenerator = imageGenerator
+		internal.EncodeImage = imageEncoder.Spy
+		internal.WriteImage = imageWriter.Spy
 
 		viper.Set("to-stdout", false)
 		viper.Set("output", cmd.DefaultOutputFilename)
@@ -37,8 +45,10 @@ var _ = Describe("Generate", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("defaulting to writing to blank.png", func() {
-			Expect(imageContext.SavePNGCallCount()).To(Equal(1))
-			Expect(imageContext.SavePNGArgsForCall(0)).To(Equal("blank.png"))
+			Expect(imageWriter.CallCount()).To(Equal(1))
+			filename, image := imageWriter.ArgsForCall(0)
+			Expect(filename).To(Equal("blank.png"))
+			Expect(image).To(Equal(img))
 		})
 
 		By("using the right resolution", func() {
@@ -62,13 +72,15 @@ var _ = Describe("Generate", func() {
 			err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(imageContext.EncodePNGCallCount()).To(Equal(1))
-			Expect(imageContext.EncodePNGArgsForCall(0)).To(Equal(output))
+			Expect(imageEncoder.CallCount()).To(Equal(1))
+			buffer, image := imageEncoder.ArgsForCall(0)
+			Expect(buffer).To(Equal(output))
+			Expect(image).To(Equal(img))
 		})
 
 		When("encoding fails", func() {
 			BeforeEach(func() {
-				imageContext.EncodePNGReturns(errors.New("encode png failed"))
+				imageEncoder.Returns(errors.New("encode png failed"))
 			})
 
 			It("returns an error", func() {
@@ -81,7 +93,7 @@ var _ = Describe("Generate", func() {
 
 	When("saving the image fails", func() {
 		BeforeEach(func() {
-			imageContext.SavePNGReturns(errors.New("save png failed"))
+			imageWriter.Returns(errors.New("save png failed"))
 		})
 
 		It("returns an error", func() {

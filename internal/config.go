@@ -2,6 +2,8 @@ package internal
 
 import (
 	"fmt"
+	"image"
+	"image/draw"
 	"os"
 
 	"golang.org/x/image/colornames"
@@ -11,20 +13,19 @@ import (
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
 //counterfeiter:generate . ImageGenerator
 type ImageGenerator interface {
-	GenerateImage(width, height int) ImageContext
+	GenerateImage(width, height int) image.Image
 }
 
 type Config struct {
 	Color string `json:"color" yaml:"color"`
 }
 
-func (c *Config) GenerateImage(width, height int) ImageContext {
-	imageContext := NewImageContext(width, height)
-	imageContext.SetColor(colornames.Map[c.Color])
-	imageContext.DrawRectangle(0, 0, float64(width), float64(height))
-	imageContext.Fill()
+func (c *Config) GenerateImage(width, height int) image.Image {
+	dst := NewImage(width, height)
+	color := &image.Uniform{colornames.Map[c.Color]}
+	Draw(dst, dst.Rect, color, image.Point{}, draw.Src)
 
-	return imageContext
+	return dst
 }
 
 func ParseConfig(path string) (*Config, error) {

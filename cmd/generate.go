@@ -22,13 +22,13 @@ var GenerateCmd = &cobra.Command{
 	Short:   "Generates a " + ImageTypeName + " image",
 	PreRunE: parseConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		imageContext := ImageGenerator.GenerateImage(viper.GetInt("width"), viper.GetInt("height"))
+		image := ImageGenerator.GenerateImage(viper.GetInt("width"), viper.GetInt("height"))
 
 		if viper.GetBool("to-stdout") {
-			return imageContext.EncodePNG(cmd.OutOrStdout())
+			return internal.EncodeImage(cmd.OutOrStdout(), image)
+		} else {
+			return internal.WriteImage(viper.GetString("output"), image)
 		}
-
-		return imageContext.SavePNG(viper.GetString("output"))
 	},
 }
 
