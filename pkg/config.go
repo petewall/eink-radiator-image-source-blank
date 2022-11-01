@@ -1,4 +1,4 @@
-package internal
+package pkg
 
 import (
 	"fmt"
@@ -8,6 +8,8 @@ import (
 
 	"golang.org/x/image/colornames"
 	"gopkg.in/yaml.v2"
+
+	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
@@ -21,9 +23,9 @@ type Config struct {
 }
 
 func (c *Config) GenerateImage(width, height int) image.Image {
-	dst := NewImage(width, height)
+	dst := internal.NewImage(width, height)
 	color := &image.Uniform{colornames.Map[c.Color]}
-	Draw(dst, dst.Rect, color, image.Point{}, draw.Src)
+	internal.Draw(dst, dst.Rect, color, image.Point{}, draw.Src)
 
 	return dst
 }

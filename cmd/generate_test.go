@@ -13,19 +13,20 @@ import (
 	"github.com/petewall/eink-radiator-image-source-blank/v2/cmd"
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal/internalfakes"
+	"github.com/petewall/eink-radiator-image-source-blank/v2/pkg/pkgfakes"
 )
 
 var _ = Describe("Generate", func() {
 	var (
 		img            image.Image
-		imageGenerator *internalfakes.FakeImageGenerator
+		imageGenerator *pkgfakes.FakeImageGenerator
 		imageEncoder   *internalfakes.FakeImageEncoder
 		imageWriter    *internalfakes.FakeImageWriter
 	)
 
 	BeforeEach(func() {
 		img = image.NewRGBA(image.Rect(0, 0, 10, 10))
-		imageGenerator = &internalfakes.FakeImageGenerator{}
+		imageGenerator = &pkgfakes.FakeImageGenerator{}
 		imageGenerator.GenerateImageReturns(img)
 		imageEncoder = &internalfakes.FakeImageEncoder{}
 		imageWriter = &internalfakes.FakeImageWriter{}

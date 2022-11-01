@@ -1,4 +1,4 @@
-package internal_test
+package pkg_test
 
 import (
 	"encoding/json"
@@ -13,6 +13,7 @@ import (
 
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal"
 	"github.com/petewall/eink-radiator-image-source-blank/v2/internal/internalfakes"
+	"github.com/petewall/eink-radiator-image-source-blank/v2/pkg"
 )
 
 var _ = Describe("Config", func() {
@@ -33,7 +34,7 @@ var _ = Describe("Config", func() {
 		})
 
 		It("makes a blank image of a certain color", func() {
-			config := &internal.Config{Color: "blanchedalmond"}
+			config := &pkg.Config{Color: "blanchedalmond"}
 			image := config.GenerateImage(100, 200)
 
 			By("creating a new image", func() {
@@ -81,7 +82,7 @@ var _ = Describe("ParseConfig", func() {
 	})
 
 	BeforeEach(func() {
-		config := internal.Config{Color: "chartreuse"}
+		config := pkg.Config{Color: "chartreuse"}
 		var err error
 		configFileContents, err = yaml.Marshal(config)
 		Expect(err).ToNot(HaveOccurred())
@@ -92,21 +93,21 @@ var _ = Describe("ParseConfig", func() {
 	})
 
 	It("parses the image config file", func() {
-		config, err := internal.ParseConfig(configFile.Name())
+		config, err := pkg.ParseConfig(configFile.Name())
 		Expect(err).ToNot(HaveOccurred())
 		Expect(config.Color).To(Equal("chartreuse"))
 	})
 
 	Context("config file is json formatted", func() {
 		BeforeEach(func() {
-			config := internal.Config{Color: "cyan"}
+			config := pkg.Config{Color: "cyan"}
 			var err error
 			configFileContents, err = json.Marshal(config)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("parses just fine", func() {
-			config, err := internal.ParseConfig(configFile.Name())
+			config, err := pkg.ParseConfig(configFile.Name())
 			Expect(err).ToNot(HaveOccurred())
 			Expect(config.Color).To(Equal("cyan"))
 		})
@@ -114,7 +115,7 @@ var _ = Describe("ParseConfig", func() {
 
 	When("reading the config file fails", func() {
 		It("returns an error", func() {
-			_, err := internal.ParseConfig("this file does not exist")
+			_, err := pkg.ParseConfig("this file does not exist")
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("failed to read image config file: open this file does not exist: no such file or directory"))
 		})
@@ -126,9 +127,9 @@ var _ = Describe("ParseConfig", func() {
 		})
 
 		It("returns an error", func() {
-			_, err := internal.ParseConfig(configFile.Name())
+			_, err := pkg.ParseConfig(configFile.Name())
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("failed to parse image config file: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into internal.Config"))
+			Expect(err.Error()).To(Equal("failed to parse image config file: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into pkg.Config"))
 		})
 	})
 })
