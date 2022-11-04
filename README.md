@@ -1,5 +1,7 @@
 # eInk Radiator Image Source: Blank
 
+![CI](https://ci.petewall.net/api/v1/teams/main/pipelines/eink-radiator/jobs/test-image-source-blank/badge)
+
 Generates an image with a single color.
 
 ```bash
