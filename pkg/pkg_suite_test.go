@@ -9,5 +9,5 @@ import (
 
 func TestPkg(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Okg Suite")
+	RunSpecs(t, "Pkg Suite")
 }

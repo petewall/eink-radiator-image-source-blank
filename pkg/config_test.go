@@ -132,4 +132,36 @@ var _ = Describe("ParseConfig", func() {
 			Expect(err.Error()).To(Equal("failed to parse image config file: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into pkg.Config"))
 		})
 	})
+
+	When("the config file has missing data", func() {
+		BeforeEach(func() {
+			config := pkg.Config{}
+			var err error
+			configFileContents, err = json.Marshal(config)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an error", func() {
+			_, err := pkg.ParseConfig(configFile.Name())
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("config file is not valid: missing color"))
+		})
+	})
+
+	When("the config file has invalid data", func() {
+		BeforeEach(func() {
+			config := pkg.Config{
+				Color: "golf",
+			}
+			var err error
+			configFileContents, err = json.Marshal(config)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an error", func() {
+			_, err := pkg.ParseConfig(configFile.Name())
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("config file is not valid: unknown color: \"golf\""))
+		})
+	})
 })

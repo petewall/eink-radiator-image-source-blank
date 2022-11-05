@@ -30,6 +30,18 @@ func (c *Config) GenerateImage(width, height int) image.Image {
 	return dst
 }
 
+func (c *Config) Validate() error {
+	if c.Color == "" {
+		return fmt.Errorf("missing color")
+	}
+
+	if _, isPresent := colornames.Map[c.Color]; !isPresent {
+		return fmt.Errorf("unknown color: \"%s\"", c.Color)
+	}
+
+	return nil
+}
+
 func ParseConfig(path string) (*Config, error) {
 	configData, err := os.ReadFile(path)
 	if err != nil {
@@ -40,6 +52,11 @@ func ParseConfig(path string) (*Config, error) {
 	err = yaml.Unmarshal(configData, &config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse image config file: %w", err)
+	}
+
+	err = config.Validate()
+	if err != nil {
+		return nil, fmt.Errorf("config file is not valid: %w", err)
 	}
 
 	return config, nil

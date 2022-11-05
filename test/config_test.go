@@ -10,12 +10,12 @@ import (
 )
 
 var _ = Describe("Config", func() {
-	It("returns the blank config", func() {
+	It("returns a blank config", func() {
 		Run("config")
 		Eventually(CommandSession).Should(Exit(0))
 		output := CommandSession.Out.Contents()
 		var blankConfig pkg.Config
 		Expect(yaml.Unmarshal(output, &blankConfig)).To(Succeed())
-		Expect(blankConfig.Color).To(BeEmpty())
+		Expect(blankConfig.Color).To(Equal("white"))
 	})
 })

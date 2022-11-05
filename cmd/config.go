@@ -12,7 +12,7 @@ var ConfigCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Print a blank config for the " + ImageTypeName + " image type",
 	Run: func(cmd *cobra.Command, args []string) {
-		encoded, _ := json.Marshal(pkg.Config{Color: ""})
+		encoded, _ := json.Marshal(pkg.Config{Color: "white"})
 		cmd.Println(string(encoded))
 	},
 }
