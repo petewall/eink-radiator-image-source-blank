@@ -5,15 +5,22 @@
 Generates an image with a single color.
 
 ```bash
-blank --config config.json --height 300 --width 400
+blank generate --config config.json --height 300 --width 400
 ```
 
 ## Configuration
 
 The only configuration is the image color. The config file can be in JSON or YAML format:
 
-```json
-{
-    "color": "purple"
-}
+| field | default | required | description |
+|-------|---------|----------|-------------|
+| color |         | Yes      | The color   |
+
+## Example
+
+```yaml
+---
+color: orange
 ```
+
+![An image rendering the orange example](test/outputs/orange.png)

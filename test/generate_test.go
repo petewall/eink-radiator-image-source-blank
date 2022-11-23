@@ -23,13 +23,13 @@ var _ = Describe("Generate", func() {
 
 	It("generates a blank image", func() {
 		outputFile = "orange.png"
-		Run("generate --output orange.png --config orange-config.yaml --height 480 --width 640")
+		Run("generate --output " + outputFile + " --config inputs/orange.yaml --height 480 --width 640")
 		Eventually(CommandSession).Should(Exit(0))
 
 		By("saving the image to a file", func() {
 			actualData, err := os.ReadFile(outputFile)
 			Expect(err).ToNot(HaveOccurred())
-			expectedData, err := os.ReadFile("expected_orange.png")
+			expectedData, err := os.ReadFile("outputs/orange.png")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(actualData).To(Equal(expectedData))
 		})
@@ -37,10 +37,10 @@ var _ = Describe("Generate", func() {
 
 	When("using --to-stdout", func() {
 		It("writes the image to stdout", func() {
-			Run("generate --height 200 --width 300 --to-stdout --config green-config.json")
+			Run("generate --height 200 --width 300 --to-stdout --config inputs/green.json")
 			Eventually(CommandSession).Should(Exit(0))
 
-			expectedData, err := os.ReadFile("expected_green.png")
+			expectedData, err := os.ReadFile("outputs/green.png")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(CommandSession.Out.Contents()).To(Equal(expectedData))
 		})
