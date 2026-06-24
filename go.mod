@@ -10,7 +10,7 @@ require (
 	github.com/onsi/gomega v1.39.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
-	golang.org/x/image v0.38.0
+	golang.org/x/image v0.43.0
 	golang.org/x/tools v0.46.0
 	gopkg.in/yaml.v2 v2.4.0
 )
