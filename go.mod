@@ -4,10 +4,10 @@ go 1.25.0
 
 require (
 	github.com/go-task/slim-sprig v2.20.0+incompatible
-	github.com/google/pprof v0.0.0-20260115054156-294ebfa9ad83
+	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.2
-	github.com/onsi/ginkgo/v2 v2.28.0
-	github.com/onsi/gomega v1.39.1
+	github.com/onsi/ginkgo/v2 v2.32.0
+	github.com/onsi/gomega v1.40.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	golang.org/x/image v0.43.0
